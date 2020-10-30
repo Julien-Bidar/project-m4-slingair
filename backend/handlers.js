@@ -7,7 +7,8 @@ const { v4: uuidv4 } = require("uuid");
 const { flights, reservations } = require("./data");
 
 const getFlights = (req, res) => {
-  res.status(200).json({ status: 200, flights });
+  const flightsAr = Object.keys(flights);
+  res.status(200).json({ status: 200, flightsAr });
 };
 
 const getFlight = (req, res) => {
@@ -54,9 +55,9 @@ const getSingleReservation = (req, res) => {
 const deleteReservation = (req, res) => {
   const id = req.params.id;
   let index = undefined;
-  reservations.forEach((res) => {
-    if (id === res.id) {
-      index = reservations.indexOf(res);
+  reservations.forEach((reservation) => {
+    if (id === reservation.id) {
+      index = reservations.indexOf(reservation);
     }
   });
   if (index >= 0) {
@@ -71,7 +72,25 @@ const deleteReservation = (req, res) => {
   }
 };
 
-const updateReservation = (req, res) => {};
+const updateReservation = (req, res) => {
+  const id = req.params.id;
+  let index = undefined;
+  const updatedData = req.body; //updatedData must include all fields from original data excepted the id which is going to be the same
+  reservations.forEach((reservation) => {
+    if (reservation.id === id) {
+      index = reservations.indexOf(reservation);
+      reservation = { ...updatedData, id: id };
+      reservations.splice(index, 1, reservation);
+      res.status(201).json({
+        status: 201,
+        message: "reservation updated",
+        reservation: reservation,
+      });
+    } else {
+      res.status(400).json({ status: 400, message: "id not found" });
+    }
+  });
+};
 
 module.exports = {
   getFlights,
