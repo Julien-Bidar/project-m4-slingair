@@ -22,16 +22,26 @@ const FlightSelect = ({ handleFlightSelect }) => {
   return (
     <Wrapper>
       {!!flightNums && (
-        <form>
+        <div>
           <label htmlFor="flight">Flight Number :</label>
           {/* TODO: Create a dropdown from the flight numbers */}
-          <select name="fligthSelect" id="fligthSelect">
-            <option value="">select a flight</option>
+          <select
+            onChange={(el) => handleFlightSelect(el)}
+            name="fligthSelect"
+            id="fligthSelect"
+          >
+            <option value="" disabled selected>
+              select a flight
+            </option>
             {flightNums.map((el) => {
-              return <option value={el}>{el}</option>;
+              return (
+                <option key={el} value={el}>
+                  {el}
+                </option>
+              );
             })}
           </select>
-        </form>
+        </div>
       )}
     </Wrapper>
   );

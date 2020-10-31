@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import FlightSelect from "./FlightSelect";
 import Form from "./Form";
 
@@ -11,6 +11,7 @@ const SeatSelect = ({ updateUserReservation }) => {
   const [formData, setFormData] = useState(initialState);
   const [disabled, setDisabled] = useState(true);
   const [subStatus, setSubStatus] = useState("idle");
+  const [errMessage, setErrMessage] = useState("");
 
   useEffect(() => {
     // This hook is listening to state changes and verifying whether or not all
@@ -45,8 +46,26 @@ const SeatSelect = ({ updateUserReservation }) => {
     ev.preventDefault();
     if (validateEmail()) {
       // TODO: Send data to the server for validation/submission
-      // TODO: if 201, add reservation id (received from server) to localStorage
+      const reservation = { ...formData, flight: flightNumber };
+      fetch("/reservations", {
+        method: "POST",
+        body: JSON.stringify(reservation),
+        headers: {
+          "content-type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          const { status, error, data } = json;
+          // TODO: if 201, add reservation id (received from server) to localStorage
+          if (status === 201) {
+            setSubStatus("confirmed");
+            const reservation = { ...data, flight: flightNumber };
+            localStorage.setItem("session", JSON.stringify(reservation));
+          }
+        });
       // TODO: if 201, redirect to /confirmed (push)
+      history.push("/confirmed");
       // TODO: if error from server, show error to user (stretch goal)
     }
   };

@@ -13,12 +13,13 @@ const getFlights = (req, res) => {
 
 const getFlight = (req, res) => {
   const id = req.params.id;
-  const key = Object.keys(flights);
-  const targetedFlight = key[0];
+  const flightsAr = Object.keys(flights);
+  const index = flightsAr.indexOf(id);
+  const targetedFlight = flightsAr[index];
   const flightSeats = flights[targetedFlight];
-  const seat = flightSeats.find((el) => el.id === id);
-  if (seat) {
-    res.status(200).json({ status: 200, seating: seat });
+  //const seat = flightSeats.find((el) => el.id === id);
+  if (flightSeats) {
+    res.status(200).json({ status: 200, seating: flightSeats });
   } else {
     res.status(404).json({ status: 404, message: "seat number not found" });
   }
@@ -76,7 +77,17 @@ const updateReservation = (req, res) => {
   const id = req.params.id;
   let index = undefined;
   const updatedData = req.body; //updatedData must include all fields from original data excepted the id which is going to be the same
+  const foundReservation = reservations.find(
+    (reservation) => reservation.id === id
+  );
+  if (foundReservation) {
+    console.log(foundReservation)
+    foundReservation = {...foundReservation, ...updatedData}
+  } else {
+  }
+
   reservations.forEach((reservation) => {
+    console.log(id, reservation.id);
     if (reservation.id === id) {
       index = reservations.indexOf(reservation);
       reservation = { ...updatedData, id: id };

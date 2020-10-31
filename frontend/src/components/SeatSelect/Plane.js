@@ -4,22 +4,27 @@ import styled from "styled-components";
 import { themeVars } from "../GlobalStyles";
 
 const Plane = ({ flightNumber, handleSeatSelect, selectedSeat }) => {
+  console.log(flightNumber);
   const [seating, setSeating] = useState([]);
+  console.log(seating);
 
   useEffect(() => {
     // TODO: get seating data for selected flight
-    fetch(`/flights/${flightNumber}`)
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        setSeating(data);
-      });
+    if (flightNumber) {
+      fetch(`/flights/${flightNumber}`)
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          console.log(data);
+          setSeating(data.seating);
+        });
+    }
   }, [flightNumber]);
 
   return (
     <Wrapper>
-      {flightNumber && seating && seating.length > 0 ? (
+      {flightNumber && seating.length > 0 ? (
         seating.map((seat) => (
           <SeatWrapper key={`seat-${seat.id}`}>
             <label>
