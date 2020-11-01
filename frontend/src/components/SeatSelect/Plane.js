@@ -4,19 +4,16 @@ import styled from "styled-components";
 import { themeVars } from "../GlobalStyles";
 
 const Plane = ({ flightNumber, handleSeatSelect, selectedSeat }) => {
-  console.log(flightNumber);
   const [seating, setSeating] = useState([]);
-  console.log(seating);
 
   useEffect(() => {
-    // TODO: get seating data for selected flight
+    // get seating data for selected flight
     if (flightNumber) {
       fetch(`/flights/${flightNumber}`)
         .then((res) => {
           return res.json();
         })
         .then((data) => {
-          console.log(data);
           setSeating(data.seating);
         });
     }

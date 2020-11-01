@@ -5,20 +5,25 @@ import { NavLink } from "react-router-dom";
 import { themeVars } from "./GlobalStyles";
 import slingairLogo from "../assets/logo_text.png";
 
-const Header = () => (
-  <Wrapper>
-    <Logo>
-      <h1>Sling Airlines</h1>
-    </Logo>
-    <Nav>
-      {/* TODO: only show links if the user has a reservation already */}
-      <>
-        <StyledNavLink to="/view-reservation">Reservation</StyledNavLink>
-        <StyledNavLink to="/profile">Profile</StyledNavLink>
-      </>
-    </Nav>
-  </Wrapper>
-);
+const Header = () => {
+  const reservation = localStorage.getItem("session");
+  return (
+    <Wrapper>
+      <Logo>
+        <h1>Sling Airlines</h1>
+      </Logo>
+      {reservation && (
+        <Nav>
+          {/* Done: only show links if the user has a reservation already */}
+          <>
+            <StyledNavLink to="/view-reservation">Reservation</StyledNavLink>
+            <StyledNavLink to="/profile">Profile</StyledNavLink>
+          </>
+        </Nav>
+      )}
+    </Wrapper>
+  );
+};
 
 const Wrapper = styled.header`
   display: flex;

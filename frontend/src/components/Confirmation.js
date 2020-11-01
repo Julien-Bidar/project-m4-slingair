@@ -4,10 +4,12 @@ import styled from "styled-components";
 import { themeVars } from "./GlobalStyles";
 import tombstone from "../assets/tombstone.png";
 
-const stringReservation = localStorage.getItem("session");
-const reservation = JSON.parse(stringReservation);
-const { id, flight, seat, email, givenName, surname } = reservation;
-const Confirmation = () => {
+// const stringReservation = localStorage.getItem("session");
+// const reservation = JSON.parse(stringReservation);
+// const { id, flight, seat, email, givenName, surname } = reservation;
+
+const Confirmation = ({ userReservation }) => {
+  const { id, flight, seat, email, givenName, surname } = userReservation;
   return (
     <>
       <Wrapper>
@@ -28,7 +30,7 @@ const Confirmation = () => {
           </p>
           <p>
             {" "}
-            <ResInfo>Reservation #: </ResInfo>
+            <ResInfo>Seat #: </ResInfo>
             {seat}
           </p>
           <p>

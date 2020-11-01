@@ -8,7 +8,7 @@ const FlightSelect = ({ handleFlightSelect }) => {
   const [flights, setFlights] = useState([]);
 
   useEffect(() => {
-    // TODO: fetch the flight numbers
+    // fetch the flight numbers
     fetch("/flights")
       .then((res) => {
         return res.json();
