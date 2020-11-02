@@ -22,10 +22,10 @@ const FlightSelect = ({ handleFlightSelect }) => {
   return (
     <Wrapper>
       {!!flightNums && (
-        <div>
+        <Div>
           <label htmlFor="flight">Flight Number :</label>
           {/* Done: Create a dropdown from the flight numbers */}
-          <select
+          <Select
             onChange={(el) => handleFlightSelect(el)}
             name="fligthSelect"
             id="fligthSelect"
@@ -40,12 +40,29 @@ const FlightSelect = ({ handleFlightSelect }) => {
                 </option>
               );
             })}
-          </select>
-        </div>
+          </Select>
+        </Div>
       )}
     </Wrapper>
   );
 };
+
+const Select = styled.select`
+  border-radius: 5px;
+  margin-left: 15px;
+  height: 28px;
+  background-color: #fdbb01;
+  color: #aa001e;
+  font-weight: bold;
+  font-style: italic;
+  font-family: "'Kosugi', Arial, Helvetica, sans-serif";
+  font-size: 18px;
+`;
+
+const Div = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
 
 const Wrapper = styled.div`
   background: ${themeVars.cadmiumRed};

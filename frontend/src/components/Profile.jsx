@@ -1,24 +1,132 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import Form from "./SeatSelect/Form";
 import { themeVars } from "./GlobalStyles";
+import { useHistory } from "react-router-dom";
 
 const Profile = () => {
+  const history = useHistory();
   const [value, setValue] = useState("");
+  const [email, setEmail] = useState("");
   const [disabled, setDisabled] = useState(true);
   const [status, setStatus] = useState("");
   const [resInformation, setResInformation] = useState({});
+  const [toDelete, setToDelete] = useState();
+  const [update, setUpdate] = useState();
+  const [formData, setFormData] = useState(resInformation);
+  const [errMessage, setErrMessage] = useState("");
 
   useEffect(() => {
     value === "" ? setDisabled(true) : setDisabled(false);
   }, [value, setValue]);
 
   const handleInput = (ev) => {
+    setEmail("");
     const id = ev.target.value;
     setValue(id);
   };
 
+  //cancel button when asked to confirm flight delete
+  const handleCancel = () => {
+    setStatus("ok");
+  };
+
+  //first delete button that appears on each reservation information
+  const handleDelete = (e) => {
+    const id = e.id;
+    setToDelete(id);
+    setStatus("deleteConf");
+  };
+
+  // button that deletes a chosen reservation
+  const handleConfDelete = (e) => {
+    fetch(`/reservations/${toDelete}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data));
+    setStatus("deleted");
+    fetch(`/profiles/${email}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        const resInfo = data.reservations;
+        setResInformation(resInfo);
+      })
+      .catch((err) => {
+        console.log(err);
+        setStatus("err");
+      });
+  };
+  //-------------Update attempt----based on index.js----------
+  const handleUpdate = (e) => {
+    const flight = e.flight;
+    const id = e.id;
+    setToDelete(id);
+    setUpdate(flight);
+    setStatus("update");
+  };
+
+  const handleSubmitUpdate = (e) => {
+    fetch(`/reservations/${toDelete}`, {
+      method: "PATCH",
+      body: JSON.stringify(formData),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+    // .then((res) => {
+    //   res.json();
+    // })
+    // .then((json) => {
+    //   console.log(json);
+    //   const { status, error, reservation } = json;
+    //   // if 201, add reservation id (received from server) to localStorage
+    //   if (status === 201) {
+    //   } else {
+    //     // if error from server, show error to user (stretch goal)
+    //     setErrMessage(error);
+    //     console.log(errMessage);
+    //   }
+    // });
+    setStatus("updated");
+  };
+
+  const handleDoneUpdating = () => {
+    fetch(`/profiles/${email}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        const resInfo = data.reservations;
+        setResInformation(resInfo);
+      })
+      .catch((err) => {
+        console.log(err);
+        setStatus("err");
+      });
+    setStatus("ok");
+  };
+
+  const handleSeatSelect = (seatId) => {
+    setFormData({ ...formData, seat: seatId });
+  };
+
+  const handleChange = (val, item) => {
+    setFormData({ ...formData, [item]: val });
+  };
+
+  //check if there is any reservation with matching email
   const handleSubmit = (e) => {
     e.preventDefault();
+    setEmail(value);
     setValue("");
     fetch(`/profiles/${value}`)
       .then((res) => {
@@ -29,7 +137,6 @@ const Profile = () => {
       })
       .then((data) => {
         const resInfo = data.reservations;
-        console.log(resInfo);
         setResInformation(resInfo);
         setStatus("ok");
       })
@@ -61,7 +168,7 @@ const Profile = () => {
           <H2>Reservations</H2>
           {resInformation.map((el) => {
             return (
-              <ResDiv>
+              <ResDiv key={el.id}>
                 <div>
                   <p>
                     <ResInfo>confirmation #: </ResInfo> {el.id}{" "}
@@ -77,13 +184,73 @@ const Profile = () => {
                   </p>
                 </div>
                 <ButtonDiv>
-                  <ButtonRes>Update reservation</ButtonRes>
-                  <ButtonRes>Delete reservation</ButtonRes>
+                  <ButtonRes onClick={() => handleUpdate(el)}>
+                    Update reservation
+                  </ButtonRes>
+                  <ButtonRes onClick={() => handleDelete(el)}>
+                    Delete reservation
+                  </ButtonRes>
                 </ButtonDiv>
                 <Line />
               </ResDiv>
             );
           })}
+        </Wrapper>
+      )}
+      {status === "deleteConf" && (
+        <Wrapper>
+          <div>
+            <p>Do you want to delete this reservation?</p>
+          </div>
+          <ButtonDiv>
+            <ButtonRes onClick={handleCancel}>Cancel</ButtonRes>
+            <ButtonRes onClick={handleConfDelete}>Delete reservation</ButtonRes>
+          </ButtonDiv>
+        </Wrapper>
+      )}
+      {status === "deleted" && (
+        <Wrapper>
+          <div>
+            <p>Reservation deleted!</p>
+          </div>
+          <ButtonDiv>
+            <ButtonRes onClick={handleCancel}>Back to reservation</ButtonRes>
+          </ButtonDiv>
+        </Wrapper>
+      )}
+      {status === "updated" && (
+        <Wrapper>
+          <div>
+            <p>Reservation updated!</p>
+          </div>
+          <ButtonDiv>
+            <ButtonRes onClick={handleDoneUpdating}>
+              Back to reservation
+            </ButtonRes>
+          </ButtonDiv>
+        </Wrapper>
+      )}
+      {status === "update" && (
+        <Wrapper>
+          <div>
+            <p>Update your reservation</p>
+          </div>
+          <Form
+            flightNumber={update}
+            formData={formData}
+            handleChange={handleChange}
+            handleSeatSelect={handleSeatSelect}
+            handleSubmit={handleSubmitUpdate}
+            disabled={false}
+            subStatus="idle"
+          />
+        </Wrapper>
+      )}
+      {status === "err" && (
+        <Wrapper>
+          <div>
+            <p>we couldn't find any reservation matching your email address</p>
+          </div>
         </Wrapper>
       )}
     </>
@@ -92,7 +259,7 @@ const Profile = () => {
 
 const ButtonDiv = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   margin-top: 10px;
 `;
 

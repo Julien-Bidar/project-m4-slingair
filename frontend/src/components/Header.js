@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 import { themeVars } from "./GlobalStyles";
 import slingairLogo from "../assets/logo_text.png";
@@ -9,9 +9,11 @@ const Header = () => {
   const reservation = localStorage.getItem("session");
   return (
     <Wrapper>
-      <Logo>
-        <h1>Sling Airlines</h1>
-      </Logo>
+      <Link to="/">
+        <Logo>
+          <h1>Sling Airlines</h1>
+        </Logo>
+      </Link>
       {reservation && (
         <Nav>
           {/* Done: only show links if the user has a reservation already */}

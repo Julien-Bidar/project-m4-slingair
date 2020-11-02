@@ -23,7 +23,6 @@ const App = () => {
     const reservation = JSON.parse(stringReservation);
 
     if (reservation) {
-      console.log(reservation.id);
       fetch(`/reservations/${reservation.id}`)
         .then((res) => {
           return res.json();
@@ -48,10 +47,10 @@ const App = () => {
             <Confirmation userReservation={userReservation} />
           </Route>
           <Route exact path="/view-reservation">
-            <Reservation userReservation={userReservation} />
+            <Reservation />
           </Route>
           <Route exact path="/profile">
-            <Profile userReservation={userReservation} />
+            <Profile updateUserReservation={updateUserReservation} />
           </Route>
           <Route path="">404: Oops!</Route>
         </Switch>
