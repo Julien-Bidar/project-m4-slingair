@@ -63,11 +63,14 @@ const SeatSelect = ({ updateUserReservation }) => {
             const reservation = { ...data, flight: flightNumber };
             localStorage.setItem("session", JSON.stringify(reservation));
             updateUserReservation(reservation);
+            // if 201, redirect to /confirmed (push)
+            history.push("/confirmed");
+          } else {
+            // if error from server, show error to user (stretch goal)
+            setErrMessage(error);
+            console.log(errMessage);
           }
         });
-      // if 201, redirect to /confirmed (push)
-      history.push("/confirmed");
-      // TODO: if error from server, show error to user (stretch goal)
     }
   };
 

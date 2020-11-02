@@ -6,6 +6,7 @@ import Footer from "./Footer";
 import SeatSelect from "./SeatSelect";
 import Confirmation from "./Confirmation";
 import Reservation from "./Reservation";
+import Profile from "./Profile";
 import GlobalStyles, { themeVars } from "./GlobalStyles";
 
 const App = () => {
@@ -34,7 +35,6 @@ const App = () => {
     }
   }, [setUserReservation]);
 
-  console.log(userReservation);
   return (
     <BrowserRouter>
       <GlobalStyles />
@@ -49,6 +49,9 @@ const App = () => {
           </Route>
           <Route exact path="/view-reservation">
             <Reservation userReservation={userReservation} />
+          </Route>
+          <Route exact path="/profile">
+            <Profile userReservation={userReservation} />
           </Route>
           <Route path="">404: Oops!</Route>
         </Switch>

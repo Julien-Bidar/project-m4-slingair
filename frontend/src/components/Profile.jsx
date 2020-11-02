@@ -1,15 +1,12 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import tombstone from "../assets/tombstone.png";
 import { themeVars } from "./GlobalStyles";
 
-const Reservation = () => {
+const Profile = () => {
   const [value, setValue] = useState("");
-  const [resInformation, setResInformation] = useState({});
   const [disabled, setDisabled] = useState(true);
   const [status, setStatus] = useState("");
+  const [resInformation, setResInformation] = useState({});
 
   useEffect(() => {
     value === "" ? setDisabled(true) : setDisabled(false);
@@ -23,7 +20,7 @@ const Reservation = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setValue("");
-    fetch(`/reservations/${value}`)
+    fetch(`/profiles/${value}`)
       .then((res) => {
         if (!res.ok) {
           throw Error(res.statusText);
@@ -31,7 +28,7 @@ const Reservation = () => {
         return res.json();
       })
       .then((data) => {
-        const resInfo = data.reservation[0];
+        const resInfo = data.reservations;
         console.log(resInfo);
         setResInformation(resInfo);
         setStatus("ok");
@@ -51,67 +48,61 @@ const Reservation = () => {
               onChange={handleInput}
               value={value}
               type="text"
-              placeholder="enter your reservation number"
+              placeholder="enter your email address"
             />
             <Button onClick={handleSubmit} type="submit" disabled={disabled}>
-              check status
+              check reservation
             </Button>
           </form>
         </InpBtn>
       </FormWrapper>
       {status === "ok" && (
-        <>
-          <Wrapper>
-            <ConfWrap>
-              <TextConf>
-                Here is the information for your reservation
+        <Wrapper>
+          <H2>Reservations</H2>
+          {resInformation.map((el) => {
+            return (
+              <ResDiv>
+                <div>
+                  <p>
+                    <ResInfo>confirmation #: </ResInfo> {el.id}{" "}
+                  </p>
+                  <p>
+                    <ResInfo>flight #: </ResInfo> {el.flight}{" "}
+                  </p>
+                  <p>
+                    <ResInfo>seat #: </ResInfo> {el.seat}{" "}
+                  </p>
+                  <p>
+                    <ResInfo>Name : </ResInfo> {el.givenName} {el.surname}{" "}
+                  </p>
+                </div>
+                <ButtonDiv>
+                  <ButtonRes>Update reservation</ButtonRes>
+                  <ButtonRes>Delete reservation</ButtonRes>
+                </ButtonDiv>
                 <Line />
-              </TextConf>
-              <p>
-                {" "}
-                <ResInfo>Reservation #: </ResInfo>
-                {resInformation.id}
-              </p>
-              <p>
-                {" "}
-                <ResInfo>Flight #: </ResInfo>
-                {resInformation.flight}
-              </p>
-              <p>
-                {" "}
-                <ResInfo>Seat #: </ResInfo>
-                {resInformation.seat}
-              </p>
-              <p>
-                <ResInfo>Name: </ResInfo> {resInformation.givenName}{" "}
-                {resInformation.surname}
-              </p>
-              <p>
-                <ResInfo>Email: </ResInfo>
-                {resInformation.email}
-              </p>
-            </ConfWrap>
-          </Wrapper>
-          <ImgWrapper>
-            <Img src={tombstone} alt="" />
-          </ImgWrapper>
-        </>
-      )}
-      {status === "err" && (
-        <>
-          <Wrapper>
-            <ConfWrap>
-              <TextConf>
-                We couldn't find your reservation number
-                <Line />
-              </TextConf>
-            </ConfWrap>
-          </Wrapper>
-        </>
+              </ResDiv>
+            );
+          })}
+        </Wrapper>
       )}
     </>
   );
 };
+
+const ButtonDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+`;
+
+const H2 = styled.h2`
+  margin-bottom: 25px;
+`;
+
+const ResDiv = styled.div`
+  margin: 15px auto;
+`;
 
 const FormWrapper = styled.div`
   display: flex;
@@ -148,26 +139,29 @@ const Button = styled.button`
   }
 `;
 
-const ImgWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  background-color: #ffb82f;
   border: 3px solid ${themeVars.alabamaCrimson};
   border-radius: 5px;
   margin: auto;
   padding: 30px;
 `;
 
-const ConfWrap = styled.div``;
+const ButtonRes = styled.button`
+  font-size: 14px;
+  font-family: sans-serif;
+  height: 25px;
+  border-radius: 5px;
+  border: none;
+  background-color: #aa001e;
+  justify-content: space-around;
 
-const TextConf = styled.p`
-  font-size: 24px;
-  color: #aa001e;
-  font-weight: 600;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Line = styled.hr`
@@ -178,9 +172,4 @@ const ResInfo = styled.span`
   font-weight: 600;
 `;
 
-const Img = styled.img`
-  width: 250px;
-  height: auto;
-`;
-
-export default Reservation;
+export default Profile;

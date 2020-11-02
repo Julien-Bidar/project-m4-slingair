@@ -12,6 +12,7 @@ const {
   getSingleReservation,
   deleteReservation,
   updateReservation,
+  getUserReservations,
 } = require("./handlers");
 
 express()
@@ -37,6 +38,7 @@ express()
   .post("/reservations", addReservations)
   .delete("/reservations/:id", deleteReservation)
   .patch("/reservations/:id", updateReservation)
+  .get("/profiles/:id", getUserReservations)
 
   // add new endpoints here ☝️
   // ---------------------------------

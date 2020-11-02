@@ -24,7 +24,7 @@ const FlightSelect = ({ handleFlightSelect }) => {
       {!!flightNums && (
         <div>
           <label htmlFor="flight">Flight Number :</label>
-          {/* TODO: Create a dropdown from the flight numbers */}
+          {/* Done: Create a dropdown from the flight numbers */}
           <select
             onChange={(el) => handleFlightSelect(el)}
             name="fligthSelect"
